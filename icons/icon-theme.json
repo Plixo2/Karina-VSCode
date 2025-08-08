@@ -1,0 +1,18 @@
+{
+    "iconDefinitions": {
+        "_karina-build-icon_dark": {
+            "iconPath": "./icon_big_white.png"
+        },
+        "_karina-build-icon_light": {
+            "iconPath": "./icon_big_black.png"
+        }
+    },
+    "fileNames": {
+        "karina-build.json": "_karina-build-icon_dark"
+    },
+    "light": {
+        "fileNames": {
+            "karina-build.json": "_karina-build-icon_light"
+        }
+    }
+}
