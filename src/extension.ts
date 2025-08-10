@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 
 interface KarinaServerConfig {
-	excludeErrorFiles: boolean;
+	logLevel: string;
 }
 let settings: KarinaServerConfig = {
-	excludeErrorFiles: false
+	logLevel: 'basic'
 };
 
 
@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const config = vscode.workspace.getConfiguration();
 	const server = config.get<string>('karina.lspLocation', '');
-	settings.excludeErrorFiles = config.get<boolean>('karina.excludeFiles', false);
+	settings.logLevel = config.get<string>('karina.logLevel', 'basic');
 
 	let restartLSPCommand = vscode.commands.registerCommand('karina.restart-lsp', () => {
 		startLsp(server);
@@ -103,12 +103,12 @@ function lspLocationWatcher(): Array<vscode.Disposable> {
 				startLsp(server);
 				vscode.window.showInformationMessage('Karina LSP location has been updated.');
 			}
-			if (e.affectsConfiguration('karina.excludeFiles')) {
+			if (e.affectsConfiguration('karina.logLevel')) {
 				const config = vscode.workspace.getConfiguration();
-				const exclude = config.get<boolean>('karina.excludeFiles', false);
-				settings.excludeErrorFiles = exclude;
+				const level = config.get<string>('karina.logLevel', 'basic');
+				settings.logLevel = level;
 				updateServerSettings();
-				vscode.window.showInformationMessage('Exclude files with errors has been updated.');
+				vscode.window.showInformationMessage('Log level has been updated.');
 			}
 		}),
 
@@ -157,7 +157,7 @@ function startLsp(server: string) {
 	client = new LanguageClient('karinaLanguageServer', 'Karina Language Server', serverOptions, clientOptions);
 
 	client.start();
-
+	
 
 }
 

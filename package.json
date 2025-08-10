@@ -1,7 +1,7 @@
 {
   "name": "karina-lsp",
   "displayName": "Karina",
-  "description": "support for the Karina programming language",
+  "description": "Support for the Karina programming language",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.96.0"
@@ -10,6 +10,7 @@
     "Other"
   ],
   "activationEvents": [
+    "onLanguage:json"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -25,8 +26,8 @@
         ],
         "configuration": "./language-configuration.json",
         "icon": {
-          "dark": "./icons/icon_small_white.png",
-          "light": "./icons/icon_small_black.png"
+          "light": "./icons/icon_small_white_outline.png",
+          "dark": "./icons/icon_small_black_outline.png"
         }
       }
     ],
@@ -52,6 +53,13 @@
           "description": "The location of the Karina LSP jar file",
           "scope": "machine"
         }, 
+        "karina.logLevel": {
+          "type": "string",
+          "enum": [ "none", "basic", "verbose", "full"],
+          "default": "basic",
+          "description": "Logging level for the Karina LSP",
+          "scope": "application"
+        },
         "karina.excludeFiles": {
           "type": "boolean",
           "default": false,
