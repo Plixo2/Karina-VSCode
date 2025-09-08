@@ -42,6 +42,10 @@
       {
         "command": "karina.restart-lsp",
         "title": "Karina: Restart LSP"
+      },
+      {
+        "command": "karina.run.file",
+        "title": "Karina: Run the current file"
       }
     ],
     "configuration": {
@@ -72,7 +76,21 @@
       "[karina]": {
         "editor.semanticHighlighting.enabled": true
       }
-    }
+    },
+    "taskDefinitions": [
+      {
+				"type": "karina.run",
+				"required": [
+					"path"
+				],
+				"properties": {
+					"path": {
+						"type": "string",
+						"description": "Path of the main file, e.g. `main` or `com::example::Main`"
+					}
+				}
+			}
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
