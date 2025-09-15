@@ -50,7 +50,7 @@
       },
       {
         "command": "karina.run.main",
-        "title": "Karina: Run main::main"
+        "title": "Karina: Run main"
       },
       {
         "command": "karina.run.file",

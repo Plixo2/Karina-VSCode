@@ -8,8 +8,6 @@
 </div>
 
 <br>
-<br>
-
 
 ## Features
 
@@ -23,7 +21,7 @@
 
 ## Setup
 
-- Install the extension from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=karina-lang.karina-vscode).
+- Install the extension from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=karina.karina-lsp).
 - Download the [Karina Language Server](https://github.com/Plixo2/KarinaC/releases/latest/download/karina-lsp.jar) and configure the path in the extension settings (`karina.lspLocation`).
 - Create a `karina-build.json` file in the root of your workspace. Example:
   ```json
@@ -31,4 +29,4 @@
     "source": "src"
   }
   ```
-- Set a Keybind for the `karina.run.main` command to run the main class
+- Set a Keybind for the `karina.run.main` command or use the command palette to run the main function of your project.
