@@ -16,7 +16,6 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:json"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -41,7 +40,7 @@
       {
         "language": "karina",
         "scopeName": "source.karina",
-        "path": "./src/karina.tmLanguage.json"
+        "path": "./karina.tmLanguage.json"
       }
     ],
     "commands": [
