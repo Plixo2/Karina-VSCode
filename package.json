@@ -104,7 +104,7 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src",
     "marketplace": "vsce publish",
-    "deploy": "vsce publish --yarn",
+    "deploy": "vsce publish",
     "test": "vscode-test"
   },
   "devDependencies": {
