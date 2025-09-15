@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind, NotificationType } from 'vscode-languageclient/node';
 
 interface KarinaServerConfig {
@@ -8,24 +9,25 @@ let settings: KarinaServerConfig = {
 	logLevel: 'basic'
 };
 
-const SendToTerminal = new NotificationType<string>('karina/sendToTerminal');
-const ClearTerminal = new NotificationType<void>('karina/clearTerminal');
 
 let client: LanguageClient | null = null;
 export function activate(context: vscode.ExtensionContext) {
 
 	const config = vscode.workspace.getConfiguration();
-	const server = config.get<string>('karina.lspLocation', '');
 	settings.logLevel = config.get<string>('karina.logLevel', 'basic');
 
-	let sendRun = vscode.commands.registerCommand('karina.run.file', () => {
+	let sendRun = vscode.commands.registerCommand('karina.run.main', () => {
 		sendRunCommand();
+	});
+
+	let sendRunFile = vscode.commands.registerCommand('karina.run.file', () => {
+		sendRunFileCommand();
 	});
 
 	let restartLSPCommand = vscode.commands.registerCommand('karina.restart-lsp', () => {
 		startLsp();
 	});
-	
+
 	let stopLSPCommand = vscode.commands.registerCommand('karina.toggle-lsp', () => {
 		if (isLSPRunning()) {
 			stopLSP();
@@ -34,6 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 	context.subscriptions.push(restartLSPCommand);
+	context.subscriptions.push(sendRunFile);
 	context.subscriptions.push(sendRun);
 	context.subscriptions.push(stopLSPCommand);
 	let watchers = lspLocationWatcher();
@@ -55,48 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
 			statusBar.text = '$(close) Karina LSP';
 		}
 
-	}, 1000); 
-
-	let lastTerminal: vscode.Pseudoterminal | undefined = undefined;
-	const taskProvider = vscode.tasks.registerTaskProvider('karina.run', {
-	provideTasks: () => {
-    	return [];
-	},
-	resolveTask(_task: vscode.Task): vscode.Task | undefined {
-		if (_task.presentationOptions) {
-			_task.presentationOptions.close = true;
-		} else {
-			_task.presentationOptions = { close: true };
-		}
-		const definition: KarinaRunTaskDefinition = <any>_task.definition;
-		const writeEmitter = new vscode.EventEmitter<string>();
-		const task = new vscode.Task(
-			definition,
-			_task.scope ?? vscode.TaskScope.Workspace,
-			"karina.run " + _task.definition.path,
-			'karina',
-			new vscode.CustomExecution(async (): Promise<vscode.Pseudoterminal> => {
-				const closeEmitter = new vscode.EventEmitter<void>();
-				let terminal: vscode.Pseudoterminal = {
-					onDidClose: closeEmitter.event,
-					onDidWrite: writeEmitter.event,
-					open: async (initialDimensions) => {
-						writeEmitter.fire(`Running Karina task: ${ _task.definition.path }\n`);
-						sendRunCommandForPath(_task.definition.path);
-						closeEmitter.fire();
-					},
-					close: () => {
-						closeEmitter.fire();
-					}
-				};
-				lastTerminal = terminal;
-				return terminal;
-			})
-		);
-		return task;
-	}
-	});
-	context.subscriptions.push(taskProvider);
+	}, 1000);
 
 	context.subscriptions.push({
 		dispose: () => clearInterval(updateInterval)
@@ -104,23 +66,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const watcher = vscode.workspace.createFileSystemWatcher('**/karina-build.json');
 
-    watcher.onDidChange(uri => {
-        vscode.window.showInformationMessage(`Restarting Karina LSP`);
-        startLsp();
-    });
-
-    watcher.onDidCreate(uri => {
-        vscode.window.showInformationMessage(`Restarting Karina LSP`);
+	watcher.onDidChange(uri => {
 		startLsp();
-    });
+	});
 
-    watcher.onDidDelete(uri => {
-        vscode.window.showInformationMessage(`Restarting Karina LSP`);
+	watcher.onDidCreate(uri => {
 		startLsp();
-    });
+	});
 
-    
-    context.subscriptions.push(watcher);
+	watcher.onDidDelete(uri => {
+		startLsp();
+	});
+
+
+	context.subscriptions.push(watcher);
 
 
 	startLsp();
@@ -130,10 +89,34 @@ export function activate(context: vscode.ExtensionContext) {
 	}, 5000);
 }
 
+let lastTerminal: vscode.Terminal | null = null;
+
 async function sendRunCommand() {
 	if (!isLSPRunning()) {
 		startLsp();
-	} 
+	}
+
+	if (client) {
+		await client.sendRequest('workspace/executeCommand', {
+			command: 'karina.run.main',
+			arguments: []
+		});
+		if (lastTerminal) {
+			lastTerminal.dispose();
+		}
+		lastTerminal = vscode.window.createTerminal({
+			name: 'Karina',
+		});
+		lastTerminal.show(true);
+		lastTerminal.sendText('build/run');
+	}
+
+
+}
+async function sendRunFileCommand() {
+	if (!isLSPRunning()) {
+		startLsp();
+	}
 
 	if (client) {
 		const uri = vscode.window.activeTextEditor?.document.uri.toString();
@@ -143,23 +126,6 @@ async function sendRunCommand() {
 		});
 	}
 }
-
-async function sendRunCommandForPath(main: string | undefined) {
-	if (!main) {
-		return;	
-	}
-	if (!isLSPRunning()) {
-		startLsp();
-	} 
-
-	if (client) {
-		await client.sendRequest('workspace/executeCommand', {
-			command: 'karina.run',
-			arguments: [main]
-		});
-	}
-}
-
 function isLSPRunning(): boolean {
 	return client !== null && client.isRunning();
 }
@@ -192,7 +158,7 @@ function lspLocationWatcher(): Array<vscode.Disposable> {
 
 function updateServerSettings() {
 	if (client) {
-		client.sendNotification('workspace/didChangeConfiguration', 
+		client.sendNotification('workspace/didChangeConfiguration',
 			{
 				settings: settings
 			}
@@ -201,7 +167,6 @@ function updateServerSettings() {
 }
 
 
-let console: vscode.OutputChannel | null = null;
 function startLsp() {
 	const config = vscode.workspace.getConfiguration();
 	const server = config.get<string>('karina.lspLocation', '');
@@ -209,20 +174,15 @@ function startLsp() {
 
 	stopLSP();
 	if (!server) {
-		vscode.window.showErrorMessage(
-			'Karina LSP location is not set. Please set it in settings.',
-			'Open Settings'
-		).then(selection => {
-			if (selection === 'Open Settings') {
-				vscode.commands.executeCommand(
-					'workbench.action.openSettings',
-					'karina.lspLocation'
-				);
-			}
-		});
+		showLSPPathError('Karina LSP location is not set. Please set it in settings.');
 		return;
 	}
 
+	if (!fs.existsSync(server)) {
+		showLSPPathError(`Karina LSP location does not exist: ${server}. Please set it in settings.`);
+		return;
+	}
+	vscode.window.showInformationMessage(`Starting Karina Language Server...`);
 	const serverOptions: ServerOptions = {
 		command: 'java',
 		args: ['-jar', server],
@@ -237,29 +197,26 @@ function startLsp() {
 
 	client.start();
 
-	if (console) {
-		console.dispose();
-		console = null;
-	}
-
-	
-	client.onNotification(SendToTerminal, async (text) => {
-		if (!console) {
-			console = vscode.window.createOutputChannel("Karina");
-		}
-		console.show(true);
-		console.appendLine(text || '');
-	});
-
-	
-	client.onNotification(ClearTerminal, async (text) => {
-		if (console) {
-			console.clear();
-		}
-	});
-
 }
 
+function showLSPPathError(message: string) {
+	vscode.window.showErrorMessage(
+		message,
+		'Open Settings',
+		'Download'
+	).then(selection => {
+		if (selection === 'Open Settings') {
+			vscode.commands.executeCommand(
+				'workbench.action.openSettings',
+				'karina.lspLocation'
+			);
+		} else if (selection === 'Download') {
+			vscode.env.openExternal(
+				vscode.Uri.parse("https://github.com/Plixo2/KarinaC/releases/latest/download/karina-lsp.jar")
+			);
+		}
+	});
+}
 
 export function deactivate() {
 
@@ -272,6 +229,6 @@ export function deactivate() {
 
 interface KarinaRunTaskDefinition extends vscode.TaskDefinition {
 
-  path?: string;
+	path?: string;
 
 }

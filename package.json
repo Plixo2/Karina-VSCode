@@ -2,7 +2,13 @@
   "name": "karina-lsp",
   "displayName": "Karina",
   "description": "Support for the Karina programming language",
-  "version": "0.0.1",
+  "version": "0.7.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Plixo2/Karina-VSCode"
+  },
+  "icon": "icons/icon_small_black_outline_128.png",
+  "publisher": "karina",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -44,8 +50,16 @@
         "title": "Karina: Restart LSP"
       },
       {
+        "command": "karina.run.main",
+        "title": "Karina: Run main::main"
+      },
+      {
         "command": "karina.run.file",
-        "title": "Karina: Run the current file"
+        "title": "Karina: Run a file"
+      },
+      {
+        "command": "karina.download-lsp",
+        "title": "Karina: Download LSP jar file"
       }
     ],
     "configuration": {
@@ -55,20 +69,21 @@
           "type": "string",
           "default": "",
           "description": "The location of the Karina LSP jar file",
+          "pattern": ".*\\.jar$",
+          "patternErrorMessage": "The path must point to a .jar file",
           "scope": "machine"
-        }, 
+        },
         "karina.logLevel": {
           "type": "string",
-          "enum": [ "none", "basic", "verbose", "full"],
+          "enum": [
+            "none",
+            "basic",
+            "verbose",
+            "full"
+          ],
           "default": "basic",
           "description": "Logging level for the Karina LSP",
           "scope": "application"
-        },
-        "karina.excludeFiles": {
-          "type": "boolean",
-          "default": false,
-          "description": "Exclude files with errors",
-          "scope": "window"
         }
       }
     },
@@ -77,20 +92,7 @@
         "editor.semanticHighlighting.enabled": true
       }
     },
-    "taskDefinitions": [
-      {
-				"type": "karina.run",
-				"required": [
-					"path"
-				],
-				"properties": {
-					"path": {
-						"type": "string",
-						"description": "Path of the main file, e.g. `main` or `com::example::Main`"
-					}
-				}
-			}
-    ]
+    "taskDefinitions": []
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -101,21 +103,24 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src",
+    "marketplace": "vsce publish",
+    "deploy": "vsce publish --yarn",
     "test": "vscode-test"
   },
   "devDependencies": {
-    "vscode-languageclient": "^9.0.1",
-    "@types/vscode": "^1.96.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/vscode": "^1.96.0",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
-    "eslint": "^9.16.0",
-    "typescript": "^5.7.2",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.6.0",
+    "eslint": "^9.16.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.7.2",
+    "vscode-languageclient": "^9.0.1",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^5.1.4"
   }
 }

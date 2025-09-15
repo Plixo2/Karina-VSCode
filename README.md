@@ -11,40 +11,24 @@
 <br>
 
 
-## What's in the folder
+## Features
 
-* This folder contains all of the files necessary for your extension.
-* `package.json` - this is the manifest file in which you declare your extension and command.
-  * The sample plugin registers a command and defines its title and command name. With this information VS Code can show the command in the command palette. It doesn’t yet need to load the plugin.
-* `src/extension.ts` - this is the main file where you will provide the implementation of your command.
-  * The file exports one function, `activate`, which is called the very first time your extension is activated (in this case by executing the command). Inside the `activate` function we call `registerCommand`.
-  * We pass the function containing the implementation of the command as the second parameter to `registerCommand`.
+- Syntax highlighting for Karina files
+- Command for running Karina code directly from VSCode
+- Error and warning diagnostics for Karina files
+- Qick fixes for imports and types
+- Completion suggestions
+- Document Symbols and Outline view
+
 
 ## Setup
 
-* install the recommended extensions (amodio.tsl-problem-matcher, ms-vscode.extension-test-runner, and dbaeumer.vscode-eslint)
-
-
-## Get up and running straight away
-
-* Press `F5` to open a new window with your extension loaded.
-* Run your command from the command palette by pressing (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) and typing `Hello World`.
-* Set breakpoints in your code inside `src/extension.ts` to debug your extension.
-* Find output from your extension in the debug console.
-
-## Make changes
-
-* You can relaunch the extension from the debug toolbar after changing code in `src/extension.ts`.
-* You can also reload (`Ctrl+R` or `Cmd+R` on Mac) the VS Code window with your extension to load your changes.
-
-
-## Explore the API
-
-* You can open the full set of our API when you open the file `node_modules/@types/vscode/index.d.ts`.
-
-
-## Go further
-
-* Reduce the extension size and improve the startup time by [bundling your extension](https://code.visualstudio.com/api/working-with-extensions/bundling-extension).
-* [Publish your extension](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) on the VS Code extension marketplace.
-* Automate builds by setting up [Continuous Integration](https://code.visualstudio.com/api/working-with-extensions/continuous-integration).
+- Install the extension from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=karina-lang.karina-vscode).
+- Download the [Karina Language Server](https://github.com/Plixo2/KarinaC/releases/latest/download/karina-lsp.jar) and configure the path in the extension settings (`karina.lspLocation`).
+- Create a `karina-build.json` file in the root of your workspace. Example:
+  ```json
+  {
+    "source": "src"
+  }
+  ```
+- Set a Keybind for the `karina.run.main` command to run the main class
