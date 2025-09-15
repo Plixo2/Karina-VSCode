@@ -8,6 +8,17 @@
 </div>
 
 <br>
+<br>
+
+![Test Status](https://github.com/Plixo2/Karina-VSCode/actions/workflows/publish_marketplace.yml/badge.svg)
+![Java Version](https://img.shields.io/badge/Java-23+-orange)
+![Karina Version](https://img.shields.io/badge/Karina-v0.7-8A2BE2)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue)](https://opensource.org/licenses/MIT)
+<br>
+
+## Requirements
+
+- Java 23+
 
 ## Features
 
