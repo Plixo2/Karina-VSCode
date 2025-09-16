@@ -13,7 +13,7 @@
 ![Test Status](https://github.com/Plixo2/Karina-VSCode/actions/workflows/publish_marketplace.yml/badge.svg)
 ![Java Version](https://img.shields.io/badge/Java-23+-orange)
 ![Karina Version](https://img.shields.io/badge/Karina-v0.7-8A2BE2)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue)](https://www.apache.org/licenses/LICENSE-2.0)
 <br>
 
 ## Requirements
@@ -32,7 +32,7 @@
 
 ## Setup
 
-- Install the extension from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=karina.karina-lsp).
+- Install the extension from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=karina.karina-lsp) or search for "Karina" in the extensions tab of VSCode
 - Download the [Karina Language Server](https://github.com/Plixo2/KarinaC/releases/latest/download/karina-lsp.jar) and configure the path in the extension settings (`karina.lspLocation`).
 - Create a `karina-build.json` file in the root of your workspace. Example:
   ```json
