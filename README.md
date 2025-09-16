@@ -25,7 +25,7 @@
 - Syntax highlighting for Karina files
 - Command for running Karina code directly from VSCode
 - Error and warning diagnostics for Karina files
-- Qick fixes for imports and types
+- Quick fixes for imports and types
 - Completion suggestions
 - Document Symbols and Outline view
 
