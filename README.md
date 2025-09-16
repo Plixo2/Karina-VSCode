@@ -32,12 +32,21 @@
 
 ## Setup
 
-- Install the extension from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=karina.karina-lsp) or search for "Karina" in the extensions tab of VSCode
+
+- Install the extension from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=karina.karina-lsp) or search for "Karina" in the extensions tab of VSCode.
 - Download the [Karina Language Server](https://github.com/Plixo2/KarinaC/releases/latest/download/karina-lsp.jar) and configure the path in the extension settings (`karina.lspLocation`).
-- Create a `karina-build.json` file in the root of your workspace. Example:
+
+- Create a new folder called `src` in your workspace and create a `main.krna` file in it with the following content:
+  ```karina
+  pub fn main(args: [string]) {
+      println("Hello, World!")
+  }
+  ```
+- Create a `karina-build.json` file in the root of your workspace with the following content:
   ```json
   {
     "source": "src"
   }
   ```
-- Set a Keybind for the `karina.run.main` command or use the command palette to run the main function of your project.
+- Set a Keybind for the `karina.run.main` command or use the command palette to run.
+
